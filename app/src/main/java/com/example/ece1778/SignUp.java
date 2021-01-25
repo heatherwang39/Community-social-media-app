@@ -15,20 +15,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class SignUp extends AppCompatActivity implements View.OnClickListener{
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private static final String TAG = "EmailPassword";
     private TextView textViewBanner;
     private Button signUp;
     private EditText editTextEmail, editTextPassword, editTextPassword2, editTextName, editTextBio;
     private ProgressBar progressBar;
+    private String uID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        // Initialize Cloud Firestore
+        db = FirebaseFirestore.getInstance();
 
         textViewBanner = (TextView) findViewById(R.id.textViewBanner);
         textViewBanner.setOnClickListener(this);
@@ -115,7 +126,26 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(SignUp.this, "User created.",Toast.LENGTH_LONG).show();
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            uID = mAuth.getCurrentUser().getUid();
+                            DocumentReference documentReference = db.collection("users").document(uID);
+                            Map<String, Object> user = new HashMap<>();
+                            user.put("email",email);
+                            user.put("name",name);
+                            user.put("bio",bio);
+                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "success: user profile is created for"+uID);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "failure: "+e.toString());
+                                }
+                            });
+                            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             progressBar.setVisibility(View.GONE);
                             //updateUI(user);
                         } else {
