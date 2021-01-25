@@ -7,9 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -28,14 +25,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        register = (Button) findViewById(R.id.signupButton);
+        register = (Button) findViewById(R.id.buttonSignUp);
         register.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.signupButton:
+            case R.id.buttonSignUp:
                 startActivity(new Intent(this, SignUp.class));
                 break;
         }
