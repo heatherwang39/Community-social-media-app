@@ -10,7 +10,8 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button register;
+    private Button buttonSignUp;
+    private Button buttonLogin;
 
     public void login(View view){
         Log.i("Info","Login Button pressed!");
@@ -25,8 +26,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        register = (Button) findViewById(R.id.buttonSignUp);
-        register.setOnClickListener(this);
+        buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
+        buttonSignUp.setOnClickListener(this);
+
+        buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        buttonLogin.setOnClickListener(this);
     }
 
     @Override
@@ -35,6 +39,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.buttonSignUp:
                 startActivity(new Intent(this, SignUp.class));
                 break;
+            case R.id.buttonLogin:
+                login();
+                break;
         }
+    }
+
+    public void login(){
+        Log.i("Info","Login Button pressed!");
     }
 }

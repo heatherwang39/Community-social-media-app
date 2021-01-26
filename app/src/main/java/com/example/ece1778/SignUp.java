@@ -3,13 +3,18 @@ package com.example.ece1778;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +28,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +39,18 @@ import java.util.Map;
 public class SignUp extends AppCompatActivity implements View.OnClickListener{
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private StorageReference storageReference;
     private static final String TAG = "EmailPassword";
-    private TextView textViewBanner;
+    private TextView textViewBanner,textViewTakePicture;
+    private ImageView profileImage;
     private Button signUp;
     private EditText editTextEmail, editTextPassword, editTextPassword2, editTextName, editTextBio;
     private ProgressBar progressBar;
     private String uID;
+    private String currentPhotoPath;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Boolean noProfilePic = true;
+    private Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +66,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         textViewBanner = (TextView) findViewById(R.id.textViewBanner);
         textViewBanner.setOnClickListener(this);
 
+        textViewTakePicture = (TextView) findViewById(R.id.textViewTakePicture);
+        textViewTakePicture.setOnClickListener(this);
+
         signUp = (Button) findViewById(R.id.buttonSignUp);
         signUp.setOnClickListener(this);
+
+        profileImage = (ImageView) findViewById(R.id.profileImage);
 
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
@@ -80,14 +99,46 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.textViewBanner:
+                // Go to login page
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 break;
             case R.id.buttonSignUp:
+                // Register user
                 signUp();
+                break;
+            case R.id.textViewTakePicture:
+                // Upload profile image
+                takePicture();
                 break;
         }
     }
+
+
+
+    private void takePicture() {
+        Log.i(TAG, "takePicture button is pressed!");
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            imageBitmap = (Bitmap) extras.get("data");
+            profileImage.setImageBitmap(imageBitmap);
+            noProfilePic = false;
+        } else {
+            Log.i(TAG, "takePictureIntent onActivityResult: RESULT CANCELLED");
+        }
+    }
+
 
     public void signUp(){
 
@@ -114,6 +165,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
             editTextPassword2.requestFocus();
             return;
         }
+
+        if(noProfilePic){
+            textViewTakePicture.setError("Profile picture is required!");
+            profileImage.requestFocus();
+            return;
+        }
+
         Log.i("Info","Signup Button in signup page is pressed!");
         progressBar.setVisibility(View.VISIBLE);
 
@@ -125,19 +183,25 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
+                            Log.d(TAG, "createUserWithEmail:firebase success");
                             Toast.makeText(SignUp.this, "User created.",Toast.LENGTH_LONG).show();
                             //FirebaseUser user = mAuth.getCurrentUser();
                             uID = mAuth.getCurrentUser().getUid();
                             DocumentReference documentReference = db.collection("users").document(uID);
                             Map<String, Object> user = new HashMap<>();
                             user.put("email",email);
-                            user.put("name",name);
+                            user.put("username",name);
                             user.put("bio",bio);
+                            user.put("displayPicPath",uID+"/displayPic.jpg");
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "success: user profile is created for"+uID);
+                                    Intent intent = new Intent(SignUp.this, Profile.class);
+                                    intent.putExtra("imageBitmap",imageBitmap);
+                                    intent.putExtra("username",name);
+                                    intent.putExtra("bio",bio);
+                                    startActivity(intent);
+                                    Log.d(TAG, "createUserWithEmail: firestore success, user profile is created for"+uID);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
