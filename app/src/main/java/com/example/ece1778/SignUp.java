@@ -198,8 +198,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                                 public void onSuccess(Void aVoid) {
                                     Intent intent = new Intent(SignUp.this, Profile.class);
                                     intent.putExtra("imageBitmap",imageBitmap);
-                                    intent.putExtra("username",name);
-                                    intent.putExtra("bio",bio);
                                     startActivity(intent);
                                     Log.d(TAG, "createUserWithEmail: firestore success, user profile is created for"+uID);
                                 }

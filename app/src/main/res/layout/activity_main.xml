@@ -43,11 +43,18 @@
             android:hint="Password"
             android:inputType="textPassword" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:visibility="invisible"/>
+
         <Button
             android:id="@+id/buttonLogin"
             android:layout_width="120dp"
             android:layout_height="60dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="50dp"
             android:text="LOG IN"
             android:textSize="18sp"
             app:backgroundTint="#777272"/>
