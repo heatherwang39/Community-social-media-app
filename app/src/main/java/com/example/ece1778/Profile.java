@@ -53,8 +53,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
         }else{
             showProfile();
         }
-
-
     }
 
     @Override
@@ -62,7 +60,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.buttonSignOut:
                 try {
-                    // Sign out then Go to login page
+                    // Sign out and then go to login page
                     mAuth.signOut();
                     startActivity(new Intent(this, MainActivity.class));
                 } catch (Exception e) {
@@ -95,7 +93,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
                     textViewBio.setText(bio);
                     Log.i("Profile","Show profile successfully"+username+" "+bio +uID);
                 }
-
             }
             });
     }

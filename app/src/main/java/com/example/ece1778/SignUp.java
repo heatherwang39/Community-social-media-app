@@ -63,9 +63,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         // Initialize Cloud Firestore
         db = FirebaseFirestore.getInstance();
 
-        textViewBanner = (TextView) findViewById(R.id.textViewBanner);
-        textViewBanner.setOnClickListener(this);
-
         textViewTakePicture = (TextView) findViewById(R.id.textViewTakePicture);
         textViewTakePicture.setOnClickListener(this);
 
@@ -98,11 +95,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.textViewBanner:
-                // Go to login page
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                break;
             case R.id.buttonSignUp:
                 // Register user
                 signUp();
@@ -117,7 +109,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
 
 
     private void takePicture() {
-        Log.i(TAG, "takePicture button is pressed!");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -136,6 +127,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
             noProfilePic = false;
         } else {
             Log.i(TAG, "takePictureIntent onActivityResult: RESULT CANCELLED");
+            Toast.makeText(SignUp.this, "Take Picture Cancelled.",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -168,11 +160,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
 
         if(noProfilePic){
             textViewTakePicture.setError("Profile picture is required!");
-            profileImage.requestFocus();
+            textViewTakePicture.requestFocus();
             return;
         }
 
-        Log.i("Info","Signup Button in signup page is pressed!");
         progressBar.setVisibility(View.VISIBLE);
 
         // [START create_user_with_email]
@@ -207,19 +198,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                                     Log.d(TAG, "failure: "+e.toString());
                                 }
                             });
-                            //startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             progressBar.setVisibility(View.GONE);
-                            //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(SignUp.this, "Authentication failed.",Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
-                            //updateUI(null);
                         }
-                        // [START_EXCLUDE]
-                        //hideProgressBar();
-                        // [END_EXCLUDE]
                     }
                 });
         // [END create_user_with_email]
