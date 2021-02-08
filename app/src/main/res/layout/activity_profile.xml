@@ -7,59 +7,78 @@
     android:orientation="vertical"
     android:gravity="right"
     tools:context=".Profile">
-
-    <TextView
-        android:id="@+id/textViewBanner"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:padding="20dp"
-        android:background="#C6CFD3"
-        android:gravity="center_vertical"
-        android:text="Profile"
-        android:textColor="@color/white"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/buttonSignOut"
-        android:layout_width="wrap_content"
+    <RelativeLayout
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#C6CFD3"
-        android:text="Log Out" />
+        android:layout_width="match_parent">
+        <TextView
+            android:id="@+id/textViewBanner"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:padding="20dp"
+            android:background="#C6CFD3"
+            android:gravity="center_vertical"
+            android:text="Profile"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/buttonSignOut"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="10dp"
+            android:text="Log Out" />
+    </RelativeLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:id="@+id/imageContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="20dp"
-        android:gravity="center"
         >
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_margin="20dp"
         android:src="@drawable/profile"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        >
+        <TextView
+            android:id="@+id/textViewUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="username"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textViewUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="username"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textViewBio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="a short bio"
-        android:textSize="18sp" />
+        <TextView
+            android:id="@+id/textViewBio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="a short bio"
+            android:textSize="18sp" />
     </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recyclerView"
+            android:scrollbars="vertical"/>
+    </RelativeLayout>
 
 
 </LinearLayout>

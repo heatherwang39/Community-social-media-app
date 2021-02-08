@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -71,11 +72,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
     }
 
     private void showProfile() {
-        Intent intent = getIntent();
-        Bitmap imageBitmap = (Bitmap) intent.getParcelableExtra("imageBitmap");
-        if(imageBitmap != null){
-            profileImage.setImageBitmap(imageBitmap);
-        }
+//        Intent intent = getIntent();
+//        Bitmap imageBitmap = (Bitmap) intent.getParcelableExtra("imageBitmap");
+//        if(imageBitmap != null){
+//            profileImage.setImageBitmap(imageBitmap);
+//        }
         DocumentReference documentReference = db.collection("users").document(uID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -91,6 +92,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
                     textViewUsername.setText(username);
                     String bio = documentSnapshot.getString("bio");
                     textViewBio.setText(bio);
+                    String profilePic = documentSnapshot.getString("displayPicPath");
+                    Glide.with(Profile.this).load(profilePic).into(profileImage);
                     Log.i("Profile","Show profile successfully"+username+" "+bio +uID);
                 }
             }
