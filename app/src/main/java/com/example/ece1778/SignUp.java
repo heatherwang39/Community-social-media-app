@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,10 +27,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,6 +44,7 @@ import java.util.Map;
 public class SignUp extends AppCompatActivity implements View.OnClickListener{
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
     private StorageReference storageReference;
     private static final String TAG = "EmailPassword";
     private TextView textViewBanner,textViewTakePicture;
@@ -51,6 +57,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private Boolean noProfilePic = true;
     private Bitmap imageBitmap;
+    private String email, name, bio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
 
         // Initialize Cloud Firestore
         db = FirebaseFirestore.getInstance();
+
+        // Initialize Storage
+        storage = FirebaseStorage.getInstance();
 
         textViewTakePicture = (TextView) findViewById(R.id.textViewTakePicture);
         textViewTakePicture.setOnClickListener(this);
@@ -134,11 +144,11 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
 
     public void signUp(){
 
-        String email = editTextEmail.getText().toString().trim();
+        email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString();
         String password2 = editTextPassword2.getText().toString();
-        String name = editTextName.getText().toString().trim();
-        String bio = editTextBio.getText().toString().trim();
+        name = editTextName.getText().toString().trim();
+        bio = editTextBio.getText().toString().trim();
 
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             editTextEmail.setError("Valid Email Address is required!");
@@ -178,12 +188,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                             Toast.makeText(SignUp.this, "User created.",Toast.LENGTH_LONG).show();
                             //FirebaseUser user = mAuth.getCurrentUser();
                             uID = mAuth.getCurrentUser().getUid();
+
                             DocumentReference documentReference = db.collection("users").document(uID);
                             Map<String, Object> user = new HashMap<>();
                             user.put("email",email);
                             user.put("username",name);
                             user.put("bio",bio);
-                            user.put("displayPicPath",uID+"/displayPic.jpg");
+                            upload(imageBitmap);
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -209,6 +220,65 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                 });
         // [END create_user_with_email]
 
+    }
+
+    private void upload(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+        String uid = FirebaseAuth.getInstance().getUid();
+        StorageReference reference = storage.getReference().child("profileImages").child(uid+".jpeg");
+
+        reference.putBytes(baos.toByteArray())
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.d(TAG, "onSuccess: upload profile pic to storage"+uri);
+                        updateProfilePic(uri);
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "OnFailure: upload profile pic to storage", e.getCause());
+            }
+        });
+    }
+
+    private void updateProfilePic(Uri uri){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder().setPhotoUri(uri).build();
+        currentUser.updateProfile(request).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(SignUp.this, "Image uploaded!", Toast.LENGTH_SHORT).show();
+                String profilePic = currentUser.getPhotoUrl().toString();
+                String userId = mAuth.getCurrentUser().getUid();
+                DocumentReference documentReference = db.collection("users").document(userId);
+                Map<String, Object> userUpdate = new HashMap<>();
+                userUpdate.put("email", email);
+                userUpdate.put("username", name);
+                userUpdate.put("bio", bio);
+                userUpdate.put("displayPicPath", profilePic);
+                documentReference.update(userUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Profile pic has been updated for user " + userId);
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(SignUp.this, "Failed in uploading profile pic.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
 }
