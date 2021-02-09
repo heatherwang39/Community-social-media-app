@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,79 +7,83 @@
     android:orientation="vertical"
     android:gravity="right"
     tools:context=".Profile">
-    <RelativeLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-        <TextView
-            android:id="@+id/textViewBanner"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:padding="20dp"
-            android:background="#C6CFD3"
-            android:gravity="center_vertical"
-            android:text="Profile"
-            android:textColor="@color/white"
-            android:textSize="30sp" />
 
-        <Button
-            android:id="@+id/buttonSignOut"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_marginRight="10dp"
-            android:text="Log Out" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/textViewBanner"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:padding="20dp"
+        android:background="#C6CFD3"
+        android:gravity="center_vertical"
+        android:text="Profile"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+    <Button
+        android:id="@+id/buttonSignOut"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Log Out" />
+
+    <Button
+        android:id="@+id/buttonPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="POST"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="10dp"
+        android:textAllCaps="false" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:id="@+id/imageContainer"
+        android:layout_below="@+id/textViewBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/profile"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="username"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="a short bio"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp"
-        >
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profileImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/profile"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp"/>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="center"
-        >
-        <TextView
-            android:id="@+id/textViewUsername"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="username"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        android:layout_below="@+id/imageContainer"
+        android:id="@+id/recyclerViewPostList"
+        android:scrollbars="vertical"/>
 
-        <TextView
-            android:id="@+id/textViewBio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="a short bio"
-            android:textSize="18sp" />
-    </LinearLayout>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recyclerView"
-            android:scrollbars="vertical"/>
-    </RelativeLayout>
-
-
-</LinearLayout>
+</RelativeLayout>
 

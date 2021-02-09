@@ -226,11 +226,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
-        String uid = FirebaseAuth.getInstance().getUid();
-        StorageReference reference = storage.getReference().child("profileImages").child(uid+".jpeg");
+        StorageReference reference = storage.getReference().child("profileImages").child(uID+".jpeg");
 
-        reference.putBytes(baos.toByteArray())
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        reference.putBytes(baos.toByteArray()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
