@@ -4,8 +4,6 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
-import androidx.multidex.MultiDexApplication;
-
 public class CurrentPost extends Application {
 
     private Bitmap postBitmap;

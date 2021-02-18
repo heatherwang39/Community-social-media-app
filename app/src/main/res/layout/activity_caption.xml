@@ -12,12 +12,14 @@
         android:layout_height="400dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/icon" />
+
     <EditText
+        android:id="@+id/editTextCaption"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_margin="10dp"
-        android:textSize="18dp"
-        android:hint="Please Enter here"/>
+        android:hint="Please Enter here"
+        android:textSize="18dp" />
     <Switch
         android:id="@+id/enableButton"
         android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -34,10 +35,11 @@ public class Caption extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private static final String TAG = "Caption";
-    private String uID, currentPhotoPath, timeStamp;
+    private String uID, currentPhotoPath, timeStamp, caption;
     private Bitmap postBitmap;
     private ImageView postImage;
     private Button buttonCancelCaption, buttonPostCaption;
+    private EditText editTextCaption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class Caption extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
 
         postImage = (ImageView) findViewById(R.id.postImage);
+        editTextCaption = (EditText) findViewById(R.id.editTextCaption);
         buttonCancelCaption = (Button) findViewById(R.id.buttonCancelCaption);
         buttonPostCaption = (Button) findViewById(R.id.buttonPostCaption);
 
@@ -129,6 +132,8 @@ public class Caption extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         Log.d(TAG, "onSuccess: get uri "+uri);
                         addToUserPosts(uri);
+                        Intent intent = new Intent(Caption.this, Profile.class);
+                        startActivity(intent);
                     }
                 });
             }
@@ -155,9 +160,13 @@ public class Caption extends AppCompatActivity {
 
     private void addToUserPosts(Uri uri){
         Map<String, Object> post = new HashMap<>();
+
+        caption = editTextCaption.getText().toString();
+
         post.put("uID", uID);
         post.put("storageRef", String.valueOf(uri));
         post.put("timeStamp", timeStamp);
+        post.put("caption", caption);
 
         db.collection("photos").document(uID).collection("posts")
                 .add(post)
@@ -173,7 +182,6 @@ public class Caption extends AppCompatActivity {
                         Log.w(TAG, "Error addToUserPosts", e);
                     }
                 });
-        finish();
     }
 
     public CurrentPost getCtx(){
