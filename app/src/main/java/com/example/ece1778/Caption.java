@@ -76,13 +76,10 @@ public class Caption extends AppCompatActivity {
             }
         });
 
-        //show post image taken in profile page
-        Intent intent = getIntent();
-        postBitmap = (Bitmap) intent.getParcelableExtra("postBitmap");
-        currentPhotoPath = intent.getStringExtra("currentPhotoPath");
-        if(postBitmap != null){
-           postImage.setImageBitmap(postBitmap);
-        }
+        //set post imageView and currentPhotoPath based on Application Context
+        postBitmap = getCtx().getPostBitmap();
+        postImage.setImageBitmap(postBitmap);
+        currentPhotoPath = getCtx().getCurrentPhotoPath();
     }
 
 
@@ -177,6 +174,10 @@ public class Caption extends AppCompatActivity {
                     }
                 });
         finish();
+    }
+
+    public CurrentPost getCtx(){
+        return ((CurrentPost) getApplicationContext());
     }
 
 

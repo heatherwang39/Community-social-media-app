@@ -197,6 +197,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
             }
             if (photoFile != null) {
                 postURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
+                getCtx().setPostUri(postURI);
                 makePostIntent.putExtra(MediaStore.EXTRA_OUTPUT, postURI);
                 startActivityForResult(makePostIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -211,9 +212,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
             Bitmap postBitmap = null;
             try {
                 postBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
+                getCtx().setPostBitmap(postBitmap);
                 Intent intent = new Intent(this, Caption.class);
-                intent.putExtra("postBitmap",postBitmap);
-//                intent.putExtra("currentPhotoPath",currentPhotoPath);
                 startActivity(intent);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -232,11 +232,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
-//        getApp().setCurrentPhoto(currentPhotoPath);
+        getCtx().setCurrentPhotoPath(currentPhotoPath);
         return image;
+    }
+
+    public CurrentPost getCtx(){
+        return ((CurrentPost) getApplicationContext());
     }
 
 }

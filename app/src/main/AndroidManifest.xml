@@ -17,8 +17,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".CurrentPost"
         android:theme="@style/Theme.ECE1778">
-        <activity android:name=".Caption"></activity>
+        <activity android:name=".Caption" />
         <activity android:name=".FullScreenPost" />
         <activity android:name=".Profile" />
         <activity android:name=".SignUp" />
