@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Caption">
+
     <ImageView
+        android:id="@+id/postImage"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_marginTop="30dp"

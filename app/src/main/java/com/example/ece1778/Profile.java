@@ -68,7 +68,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
     private ArrayList<Post> postList;
     private Adapter adapter;
     private GridLayoutManager gridLayoutManager;
-    private String currentPhotoPath, timeStamp;
+    private String currentPhotoPath;
 
     private Context context;
     private Uri postURI;
@@ -188,15 +188,15 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
         Log.d("Profile","makePost button is clicked!");
         Intent makePostIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (makePostIntent.resolveActivity(getPackageManager()) != null) {
-            File postFile = null;
+            File photoFile = null;
             try {
-                postFile = createPostFile();
+                photoFile = createImageFile();
             } catch (IOException ex) {
                 Toast.makeText(Profile.this, "Error when creating the Post File",
                         Toast.LENGTH_LONG).show();
             }
-            if (postFile != null) {
-                postURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",postFile);
+            if (photoFile != null) {
+                postURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
                 makePostIntent.putExtra(MediaStore.EXTRA_OUTPUT, postURI);
                 startActivityForResult(makePostIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -206,33 +206,24 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE){
-            switch (resultCode){
-                case RESULT_OK:
-                    Log.i("Profile", "onActivityResult: Make Post Image Capture RESULT OK");
-                    Bitmap bitmapConvert = null;
-                    try {
-                        bitmapConvert = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        uploadPost(bitmapConvert);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case RESULT_CANCELED:
-                    Log.i("Profile", "onActivityResult: Make Post Image Capture RESULT CANCELLED");
-                    break;
-                default:
-                    break;
-
-            }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            Log.i("Profile", "onActivityResult: Make Post Image Capture RESULT OK");
+            Bitmap postBitmap = null;
+            try {
+                postBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
+                Intent intent = new Intent(this, Caption.class);
+                intent.putExtra("postBitmap",postBitmap);
+//                intent.putExtra("currentPhotoPath",currentPhotoPath);
+                startActivity(intent);
+            } catch (IOException e) {
+                e.printStackTrace();
+        }}else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_CANCELED){
+            Log.i("Profile", "onActivityResult: Make Post Image Capture RESULT CANCELLED");
+        }else{
         }
     }
 
-    private File createPostFile() throws IOException {
+    private File createImageFile() throws IOException {
         String timeStamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -248,96 +239,4 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
         return image;
     }
 
-    private void uploadPost(Bitmap bitmap) throws IOException {
-        // Crop the image to square
-        Bitmap square = cropToSquare(bitmap);
-
-        //Rotate the image
-        ExifInterface ei = new ExifInterface(currentPhotoPath);
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL);
-        Bitmap rotatedBitmap = null;
-        Matrix matrix = new Matrix();
-        switch(orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.postRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.postRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.postRotate(270);
-                break;
-            default:
-        }
-        rotatedBitmap = Bitmap.createBitmap(square, 0, 0, square.getWidth(), square.getHeight(),
-                matrix, true);
-
-        // Downscale to 1024*1024
-        Bitmap finalBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 1024, 1024, true);
-
-        //upload
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-        timeStamp = String.valueOf(System.currentTimeMillis());
-        final StorageReference postReference = storage.getReference().child("photos").child(uID+"/"+timeStamp+".jpeg");
-
-        postReference.putBytes(baos.toByteArray()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(Profile.this, "onSuccess: Image Posted",
-                        Toast.LENGTH_SHORT).show();
-                postReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Log.d("Profile", "onSuccess: get uri "+uri);
-                        addToUserPosts(uri);
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("Profile", "OnFailure: ", e.getCause());
-            }
-        });
-    }
-
-    public static Bitmap cropToSquare(Bitmap bitmap){
-        Bitmap cropImg;
-        if (bitmap.getWidth() >= bitmap.getHeight()){
-            cropImg = Bitmap.createBitmap(bitmap,bitmap.getWidth()/2 - bitmap.getHeight()/2,0,
-                    bitmap.getHeight(),bitmap.getHeight());
-        }else{
-            cropImg = Bitmap.createBitmap(bitmap,0,bitmap.getHeight()/2 - bitmap.getWidth()/2,
-                    bitmap.getWidth(),bitmap.getWidth());
-        }
-        return cropImg;
-    }
-
-
-    private void addToUserPosts(Uri uri){
-        Map<String, Object> post = new HashMap<>();
-        post.put("uID", uID);
-        post.put("storageRef", String.valueOf(uri));
-        post.put("timeStamp", timeStamp);
-
-        db.collection("photos").document(uID).collection("posts")
-                .add(post)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("Profile", "On Success: addToUserPosts" + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Profile", "Error addToUserPosts", e);
-                    }
-                });
-        //update the posts shown in user's profile page
-        loadPosts();
-    }
 }
