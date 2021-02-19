@@ -15,13 +15,13 @@
         android:textColor="@color/white"
         android:textSize="30sp" />
     <ImageView
-        android:id="@+id/buttonDelete"
+        android:id="@+id/deletePost"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_margin="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/deleteIcon"/>
+        android:src="@drawable/delete"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="350dp"
@@ -54,18 +54,18 @@
         android:gravity="center">
 
         <EditText
-            android:id="@+id/editComments"
+            android:id="@+id/editTextComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Type new comment here" />
 
-        <Button
-            android:id="@+id/btnComments"
+        <ImageView
+            android:id="@+id/sendComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:text="Send" />
+            android:layout_weight="5"
+            android:src="@drawable/send"/>
     </LinearLayout>
 
 </RelativeLayout>

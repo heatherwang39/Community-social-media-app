@@ -43,6 +43,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(ctx, Comment.class);
                 intent.putExtra("postURL", postList.get(position).getStorageRef());
+                intent.putExtra("uID", postList.get(position).getUID());
+                intent.putExtra("caption", postList.get(position).getCaption());
                 ctx.startActivity(intent);
             }
         });

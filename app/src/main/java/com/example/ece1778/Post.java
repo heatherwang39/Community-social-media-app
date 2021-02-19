@@ -4,14 +4,17 @@ public class Post {
     private String uID = "";
     private String storageRef = "";
     private String timeStamp = "";
+    private String caption = "";
 
     public Post(){
     }
 
-    public Post(String uID, String storageRef, String timeStamp) {
+    public Post(String uID, String storageRef, String timeStamp, String caption) {
         this.uID = uID;
         this.storageRef = storageRef;
         this.timeStamp = timeStamp;
+        this.caption = caption;
+
     }
 
     public String getUID() {
@@ -36,6 +39,14 @@ public class Post {
 
     public void setTimestamp(String timestamp) {
         this.timeStamp = timestamp;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
 
 }
