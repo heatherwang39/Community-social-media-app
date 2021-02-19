@@ -6,12 +6,9 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,8 +22,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,15 +34,10 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -66,7 +56,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
 
     private RecyclerView recyclerViewPostList;
     private ArrayList<Post> postList;
-    private Adapter adapter;
+    private PostAdapter postAdapter;
     private GridLayoutManager gridLayoutManager;
     private String currentPhotoPath;
 
@@ -177,8 +167,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
                         } else {
                             Log.d("Profile", "Error getting documents: ", task.getException());
                         }
-                        adapter = new Adapter(context, postList);
-                        recyclerViewPostList.setAdapter(adapter);
+                        postAdapter = new PostAdapter(context, postList);
+                        recyclerViewPostList.setAdapter(postAdapter);
                         recyclerViewPostList.setHasFixedSize(true);
                     }
                 });

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewCommentBanner"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:padding="20dp"
+        android:background="#C6CFD3"
+        android:gravity="center_vertical"
+        android:text="Profile"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@+id/textViewCommentBanner"
+        android:layout_margin="10dp"
+        android:id="@+id/imageViewComment"
+        android:src="@drawable/icon"/>
+
+    <TextView
+        android:id="@+id/textViewCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewComment"
+        android:gravity="center"
+        android:text="This is a Caption"
+        android:textSize="24sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textViewCaption"
+        android:id="@+id/recyclerViewCommentList"
+        android:scrollbars="vertical"/>
+
+</RelativeLayout>

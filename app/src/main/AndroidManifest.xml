@@ -20,7 +20,7 @@
         android:name=".CurrentPost"
         android:theme="@style/Theme.ECE1778">
         <activity android:name=".Caption" />
-        <activity android:name=".FullScreenPost" />
+        <activity android:name=".Comment" />
         <activity android:name=".Profile" />
         <activity android:name=".SignUp" />
         <activity android:name=".MainActivity">

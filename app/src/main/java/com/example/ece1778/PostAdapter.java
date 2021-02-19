@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,13 +14,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     List<Post> postList;
     LayoutInflater inflater;
     Context ctx;
 
-    public Adapter(Context ctx, List<Post> postList){
+    public PostAdapter(Context ctx, List<Post> postList){
         this.ctx = ctx;
         this.postList = postList;
         this.inflater = LayoutInflater.from(ctx);
@@ -42,7 +41,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.postView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ctx, FullScreenPost.class);
+                Intent intent = new Intent(ctx, Comment.class);
                 intent.putExtra("postURL", postList.get(position).getStorageRef());
                 ctx.startActivity(intent);
             }
