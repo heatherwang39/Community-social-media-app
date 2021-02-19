@@ -22,13 +22,15 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/delete"/>
+
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@+id/textViewCommentsBanner"
-        android:layout_margin="10dp"
         android:id="@+id/imageViewComment"
-        android:src="@drawable/icon"/>
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/textViewCommentsBanner"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/icon" />
 
     <TextView
         android:id="@+id/textViewCaption"
@@ -41,7 +43,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="250dp"
         android:layout_below="@+id/textViewCaption"
         android:id="@+id/recyclerViewCommentList"
         android:scrollbars="vertical"/>
