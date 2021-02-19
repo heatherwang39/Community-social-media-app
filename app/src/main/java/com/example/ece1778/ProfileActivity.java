@@ -41,7 +41,7 @@ import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
-public class Profile extends AppCompatActivity implements View.OnClickListener{
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -89,10 +89,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
         buttonPost = (Button) findViewById(R.id.buttonPost);
         buttonPost.setOnClickListener(this);
 
-        context = Profile.this;
+        context = ProfileActivity.this;
 
         if(mAuth.getCurrentUser() == null){
-            startActivity(new Intent(Profile.this, MainActivity.class));
+            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
         }else{
             showProfile();
         }
@@ -126,7 +126,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if(e != null){
-                    Toast.makeText(Profile.this,"Error while loading", Toast.LENGTH_SHORT);
+                    Toast.makeText(ProfileActivity.this,"Error while loading", Toast.LENGTH_SHORT);
                     Log.d("Profile","-->"+e.toString());
                     return;
                 }
@@ -137,7 +137,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
                     String bio = documentSnapshot.getString("bio");
                     textViewBio.setText(bio);
                     String profilePic = documentSnapshot.getString("displayPicPath");
-                    Glide.with(Profile.this).load(profilePic).into(profileImage);
+                    Glide.with(ProfileActivity.this).load(profilePic).into(profileImage);
                     Log.i("Profile","Show profile successfully"+username+" "+bio +uID);
                 }
             }
@@ -182,7 +182,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener{
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Toast.makeText(Profile.this, "Error when creating the Post File",
+                Toast.makeText(ProfileActivity.this, "Error when creating the Post File",
                         Toast.LENGTH_LONG).show();
             }
             if (photoFile != null) {

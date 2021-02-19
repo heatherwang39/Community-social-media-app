@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
@@ -35,13 +34,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class SignUp extends AppCompatActivity implements View.OnClickListener{
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener{
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -137,7 +134,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
             noProfilePic = false;
         } else {
             Log.i(TAG, "takePictureIntent onActivityResult: RESULT CANCELLED");
-            Toast.makeText(SignUp.this, "Take Picture Cancelled.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, "Take Picture Cancelled.",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -185,7 +182,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:firebase success");
-                            Toast.makeText(SignUp.this, "User created.",Toast.LENGTH_LONG).show();
+                            Toast.makeText(SignUpActivity.this, "User created.",Toast.LENGTH_LONG).show();
                             //FirebaseUser user = mAuth.getCurrentUser();
                             uID = mAuth.getCurrentUser().getUid();
 
@@ -198,7 +195,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Intent intent = new Intent(SignUp.this, Profile.class);
+                                    Intent intent = new Intent(SignUpActivity.this, ProfileActivity.class);
                                     intent.putExtra("imageBitmap",imageBitmap);
                                     startActivity(intent);
                                     Log.d(TAG, "createUserWithEmail: firestore success, user profile is created for"+uID);
@@ -213,7 +210,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUp.this, "Authentication failed.",Toast.LENGTH_LONG).show();
+                            Toast.makeText(SignUpActivity.this, "Authentication failed.",Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                         }
                     }
@@ -253,7 +250,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         currentUser.updateProfile(request).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(SignUp.this, "Image uploaded!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "Image uploaded!", Toast.LENGTH_SHORT).show();
                 String profilePic = currentUser.getPhotoUrl().toString();
                 String userId = mAuth.getCurrentUser().getUid();
                 DocumentReference documentReference = db.collection("users").document(userId);
@@ -273,7 +270,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignUp.this, "Failed in uploading profile pic.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "Failed in uploading profile pic.", Toast.LENGTH_SHORT).show();
 
             }
         });

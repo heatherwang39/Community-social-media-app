@@ -20,9 +20,9 @@
         android:name=".CurrentPost"
         android:theme="@style/Theme.ECE1778">
         <activity android:name=".Caption" />
-        <activity android:name=".Comment" />
-        <activity android:name=".Profile" />
-        <activity android:name=".SignUp" />
+        <activity android:name=".CommentActivity" />
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

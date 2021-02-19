@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="right"
-    tools:context=".Profile">
+    tools:context=".ProfileActivity">
 
     <TextView
         android:id="@+id/textViewBanner"

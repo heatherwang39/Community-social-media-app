@@ -41,7 +41,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.postView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ctx, Comment.class);
+                Intent intent = new Intent(ctx, CommentActivity.class);
                 intent.putExtra("postURL", postList.get(position).getStorageRef());
                 intent.putExtra("uID", postList.get(position).getUID());
                 intent.putExtra("caption", postList.get(position).getCaption());

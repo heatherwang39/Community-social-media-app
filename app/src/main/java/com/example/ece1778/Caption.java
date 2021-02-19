@@ -132,7 +132,7 @@ public class Caption extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         Log.d(TAG, "onSuccess: get uri "+uri);
                         addToUserPosts(uri);
-                        Intent intent = new Intent(Caption.this, Profile.class);
+                        Intent intent = new Intent(Caption.this, ProfileActivity.class);
                         startActivity(intent);
                     }
                 });

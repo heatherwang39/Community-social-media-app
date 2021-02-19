@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Check whether the user has been logged in
         if(mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(getApplicationContext(), Profile.class));
+            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         }else{
             buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
             buttonSignUp.setOnClickListener(this);
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonSignUp:
-                startActivity(new Intent(this, SignUp.class));
+                startActivity(new Intent(this, SignUpActivity.class));
                 break;
             case R.id.buttonLogin:
                 login();
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(MainActivity.this, Profile.class);
+                            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                             startActivity(intent);
                             Log.d(TAG, "successfully logged in");
                             progressBar.setVisibility(View.INVISIBLE);
