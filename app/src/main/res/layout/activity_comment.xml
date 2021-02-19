@@ -5,19 +5,27 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textViewCommentBanner"
+        android:id="@+id/textViewCommentsBanner"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:padding="20dp"
         android:background="#C6CFD3"
         android:gravity="center_vertical"
-        android:text="Profile"
+        android:text="Comments"
         android:textColor="@color/white"
         android:textSize="30sp" />
     <ImageView
+        android:id="@+id/buttonDelete"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/deleteIcon"/>
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:layout_below="@+id/textViewCommentBanner"
+        android:layout_below="@+id/textViewCommentsBanner"
         android:layout_margin="10dp"
         android:id="@+id/imageViewComment"
         android:src="@drawable/icon"/>
@@ -37,5 +45,27 @@
         android:layout_below="@+id/textViewCaption"
         android:id="@+id/recyclerViewCommentList"
         android:scrollbars="vertical"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/editComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type new comment here" />
+
+        <Button
+            android:id="@+id/btnComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="Send" />
+    </LinearLayout>
 
 </RelativeLayout>
