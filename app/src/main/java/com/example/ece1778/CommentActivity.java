@@ -115,8 +115,10 @@ public class CommentActivity extends AppCompatActivity {
 
     private void loadComments() {
         commentList.clear();
-        CollectionReference collectionReference = db.collection("comments").document(postUID).collection("allComments");
-        collectionReference.orderBy("timeStamp", Query.Direction.ASCENDING)
+        CollectionReference collectionReference = db.collection("comments");
+        collectionReference
+                .whereEqualTo("postURL",postURL)
+                .orderBy("timeStamp", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -150,10 +152,10 @@ public class CommentActivity extends AppCompatActivity {
                 timeStamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
 
                 //add custom object: comment
-                Comment comment = new Comment(commenterUID, commenterUsername, commenterProfile,
-                        commentContent, timeStamp);
+                Comment comment = new Comment(commenterUsername, commenterProfile,
+                        commentContent, timeStamp, postURL);
 
-                db.collection("comments").document(postUID).collection("allComments")
+                db.collection("comments")
                         .add(comment)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override

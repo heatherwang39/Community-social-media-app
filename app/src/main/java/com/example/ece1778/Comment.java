@@ -1,32 +1,24 @@
 package com.example.ece1778;
 
 public class Comment {
-    private String uID = "";
     private String username = "";
     private String displayPicPath = "";
     private String commentContent = "";
     private String timeStamp = "";
+    private String postURL = "";
 
     public Comment(){
     }
 
-    public Comment(String uID, String username, String displayPicPath, String commentContent, String timeStamp) {
-        this.uID = uID;
+    public Comment(String username, String displayPicPath, String commentContent, String timeStamp, String postURL) {
         this.username = username;
         this.displayPicPath = displayPicPath;
         this.commentContent = commentContent;
         this.timeStamp = timeStamp;
+        this.postURL = postURL;
     }
 
     //Getter and Setter
-    public String getUID() {
-        return uID;
-    }
-
-    public void setUID(String uID) {
-        this.uID = uID;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -58,4 +50,10 @@ public class Comment {
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+
+    public String getPostURL() { return postURL; }
+
+    public void setPostURL(String postURL) { this.postURL = postURL; }
+
 }
