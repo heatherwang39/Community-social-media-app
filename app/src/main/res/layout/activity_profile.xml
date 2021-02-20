@@ -20,13 +20,15 @@
         android:textSize="30sp" />
     <Button
         android:id="@+id/buttonSignOut"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:text="Log Out" />
+        android:text="Log Out"
+        android:drawableLeft="@drawable/ic_logout"
+        />
 
 
     <LinearLayout
@@ -90,7 +92,8 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:text="@string/global"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:drawableLeft="@drawable/ic_global"/>
         <Button
             android:id="@+id/buttonPost"
             android:layout_width="match_parent"
@@ -98,7 +101,8 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:text="@string/post"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:drawableLeft="@drawable/ic_post"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -18,12 +18,13 @@
         android:textSize="30sp" />
     <Button
         android:id="@+id/buttonSignOut"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="10dp"
-        android:text="Log Out" />
+        android:text="Log Out"
+        android:drawableLeft="@drawable/ic_logout"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewGlobalPostList"
@@ -46,7 +47,8 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:text="@string/my_feed"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:drawableLeft="@drawable/ic_my_feed"/>
         <Button
             android:id="@+id/buttonPost"
             android:layout_width="match_parent"
@@ -54,7 +56,8 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:text="@string/post"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:drawableLeft="@drawable/ic_post"/>
     </LinearLayout>
 
 </RelativeLayout>
