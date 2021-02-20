@@ -49,8 +49,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView textViewUsername,textViewBio;
     private ImageView profileImage;
     private String uID;
-    private Button buttonSignOut;
-    private Button buttonPost;
+    private Button buttonSignOut, buttonPost, buttonGlobal;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -78,6 +77,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         // Initialize Storage
         storage = FirebaseStorage.getInstance();
 
+        postList = new ArrayList <Post> ();
+
         textViewUsername = (TextView) findViewById(R.id.textViewUsername);
         textViewBio = (TextView) findViewById(R.id.textViewBio);
         profileImage = (ImageView) findViewById(R.id.profileImage);
@@ -85,9 +86,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         buttonSignOut = (Button) findViewById(R.id.buttonSignOut);
         buttonSignOut.setOnClickListener(this);
 
-        postList = new ArrayList <Post> ();
         buttonPost = (Button) findViewById(R.id.buttonPost);
         buttonPost.setOnClickListener(this);
+
+        buttonGlobal = (Button) findViewById(R.id.buttonGlobal);
+        buttonGlobal.setOnClickListener(this);
 
         context = ProfileActivity.this;
 
@@ -117,6 +120,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     e.printStackTrace();
                 }
                 break;
+            case R.id.buttonGlobal:
+                startActivity(new Intent(this, GlobalActivity.class));
         }
     }
 

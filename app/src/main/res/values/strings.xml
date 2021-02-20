@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ECE1778</string>
+    <string name="this_is_a_caption">This is a Caption</string>
+    <string name="type_new_comment_here">Type new comment here</string>
+    <string name="my_feed">My Feed</string>
+    <string name="post">Post</string>
+    <string name="global">Global</string>
 </resources>

@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="right"
-    tools:context=".ProfileActivity">
+    tools:context=".GlobalActivity">
 
     <TextView
         android:id="@+id/textViewBanner"
@@ -15,7 +13,7 @@
         android:padding="20dp"
         android:background="#C6CFD3"
         android:gravity="center_vertical"
-        android:text="Profile"
+        android:text="Global"
         android:textColor="@color/white"
         android:textSize="30sp" />
     <Button
@@ -24,56 +22,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="10dp"
         android:text="Log Out" />
 
-
-    <LinearLayout
-        android:id="@+id/imageContainer"
-        android:layout_below="@+id/textViewBanner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="20dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/profile"
-            app:civ_border_color="#FF000000"
-            app:civ_border_width="2dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textViewUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="username"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewBio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="a short bio"
-                android:textSize="18sp" />
-        </LinearLayout>
-    </LinearLayout>
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPostList"
+        android:id="@+id/recyclerViewGlobalPostList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/imageContainer"
+        android:layout_below="@+id/textViewBanner"
         android:layout_above="@+id/bottomButtonContainer"
         android:layout_marginTop="0dp"
         android:scrollbars="vertical" />
@@ -84,12 +40,12 @@
         android:orientation="horizontal"
         android:id="@+id/bottomButtonContainer">
         <Button
-            android:id="@+id/buttonGlobal"
+            android:id="@+id/buttonMyFeed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:text="@string/global"
+            android:text="@string/my_feed"
             android:textAllCaps="true" />
         <Button
             android:id="@+id/buttonPost"
@@ -98,8 +54,7 @@
             android:layout_weight="1"
             android:layout_margin="10dp"
             android:text="@string/post"
-            android:textAllCaps="true" />
+            android:textAllCaps="false" />
     </LinearLayout>
 
 </RelativeLayout>
-

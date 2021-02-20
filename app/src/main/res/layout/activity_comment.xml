@@ -38,12 +38,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageViewComment"
         android:gravity="center"
-        android:text="This is a Caption"
+        android:text="@string/this_is_a_caption"
         android:textSize="24sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/typeCommentContainer"
         android:layout_below="@+id/textViewCaption"
         android:id="@+id/recyclerViewCommentList"
         android:scrollbars="vertical"/>
@@ -54,14 +55,15 @@
         android:layout_margin="5dp"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:id="@+id/typeCommentContainer">
 
         <EditText
             android:id="@+id/editTextComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Type new comment here" />
+            android:hint="@string/type_new_comment_here" />
 
         <ImageView
             android:id="@+id/sendComment"
