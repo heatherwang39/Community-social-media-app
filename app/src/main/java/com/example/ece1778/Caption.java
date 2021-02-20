@@ -163,12 +163,13 @@ public class Caption extends AppCompatActivity {
 
         caption = editTextCaption.getText().toString();
 
+        //I don't use custom object post here because all field names are converted to lowercase automatically, like uid and timestamp
         post.put("uID", uID);
         post.put("storageRef", String.valueOf(uri));
         post.put("timeStamp", timeStamp);
         post.put("caption", caption);
 
-        db.collection("photos").document(uID).collection("posts")
+        db.collection("photos")
                 .add(post)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override

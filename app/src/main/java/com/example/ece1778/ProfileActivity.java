@@ -157,8 +157,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void loadPosts() {
         postList.clear();
-        CollectionReference collectionReference = db.collection("photos").document(uID).collection("posts");
-        collectionReference.orderBy("timeStamp", Query.Direction.DESCENDING)
+        CollectionReference collectionReference = db.collection("photos");
+        Log.d("Profile uID:",uID);
+        collectionReference
+                .whereEqualTo("uID", uID)
+                .orderBy("timeStamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

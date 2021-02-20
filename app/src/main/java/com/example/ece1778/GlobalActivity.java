@@ -85,7 +85,7 @@ public class GlobalActivity extends AppCompatActivity {
     private void loadGlobalPosts() {
 
         globalPostList.clear();
-        CollectionReference collectionReference = db.collection("photos").document(uID).collection("posts");
+        CollectionReference collectionReference = db.collection("photos");
         collectionReference.orderBy("timeStamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
