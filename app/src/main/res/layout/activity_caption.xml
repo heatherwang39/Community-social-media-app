@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_marginTop="30dp"
-        android:src="@drawable/icon" />
+        android:src="@drawable/camera"/>
 
     <EditText
         android:id="@+id/editTextCaption"
@@ -46,7 +46,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="Cancel"
+            android:drawableLeft="@drawable/ic_cancel"/>
 
         <Button
             android:id="@+id/buttonPostCaption"
@@ -54,7 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Post" />
+            android:text="Post"
+            android:drawableLeft="@drawable/ic_post"/>
 
     </LinearLayout>
 

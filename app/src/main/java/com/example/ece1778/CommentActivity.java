@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -76,6 +77,7 @@ public class CommentActivity extends AppCompatActivity {
         deletePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                deletePost();
                 Log.i(TAG,"deletePost is clicked!");
             }
         });
@@ -104,6 +106,10 @@ public class CommentActivity extends AppCompatActivity {
             textViewCaption.setText(postCaption);
         }
 
+        if(postUID.equals(commenterUID)){
+            deletePost.setVisibility(View.VISIBLE);
+        }
+
         //set comment list recycler view and layout manager
         recyclerViewCommentList = (RecyclerView) findViewById(R.id.recyclerViewCommentList);
         gridLayoutManager = new GridLayoutManager(this, 1,GridLayoutManager.VERTICAL,false);
@@ -111,6 +117,48 @@ public class CommentActivity extends AppCompatActivity {
 
         //load comments
         loadComments();
+    }
+
+    private void deletePost() {
+        //delete the post
+        db.collection("photos")
+                .whereEqualTo("storageRef",postURL)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        db.collection("photos").document(document.getId()).delete();
+                        Log.d(TAG, "Successfully deleting post document: "+document.getId());
+
+                        //after delete the post, go back to Profile page
+                        //I put it here to make sure the async delete post is complete
+                        startActivity(new Intent(CommentActivity.this, ProfileActivity.class));
+                    }
+                } else {
+                    Log.d(TAG, "Error getting post documents when deleting: ", task.getException());
+                }
+            }
+        });
+
+        //delete the comments
+        db.collection("comments")
+                .whereEqualTo("postURL",postURL)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        db.collection("comments").document(document.getId()).delete();
+                        Log.d(TAG, "Successfully deleting comment document: "+document.getId());
+                    }
+                } else {
+                    Log.d(TAG, "Error getting comment documents when deleting: ", task.getException());
+                }
+            }
+        });
+
+
     }
 
     private void loadComments() {

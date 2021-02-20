@@ -52,8 +52,9 @@ public class GlobalActivity extends AppCompatActivity {
         globalPostList = new ArrayList <Post> ();
 
         buttonSignOut = (Button) findViewById(R.id.buttonSignOut);
-        buttonPost = (Button) findViewById(R.id.buttonPost);
         buttonMyFeed = (Button) findViewById(R.id.buttonMyFeed);
+        buttonPost = (Button) findViewById(R.id.buttonPost);
+
         
         buttonSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +73,13 @@ public class GlobalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(GlobalActivity.this, ProfileActivity.class));
+            }
+        });
+
+        buttonPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(GlobalActivity.this, Caption.class));
             }
         });
 

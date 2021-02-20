@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String uID;
     private Button buttonSignOut, buttonPost, buttonGlobal;
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
 
     private RecyclerView recyclerViewPostList;
     private ArrayList<Post> postList;
@@ -60,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String currentPhotoPath;
 
     private Context context;
-    private Uri postURI;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,11 +114,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case R.id.buttonPost:
-                try {
-                    makePost();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                startActivity(new Intent(ProfileActivity.this, Caption.class));
                 break;
             case R.id.buttonGlobal:
                 startActivity(new Intent(this, GlobalActivity.class));
@@ -182,59 +178,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 });
     }
 
-    private void makePost() {
-        Log.d("Profile","makePost button is clicked!");
-        Intent makePostIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (makePostIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Toast.makeText(ProfileActivity.this, "Error when creating the Post File",
-                        Toast.LENGTH_LONG).show();
-            }
-            if (photoFile != null) {
-                postURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
-                getCtx().setPostUri(postURI);
-                makePostIntent.putExtra(MediaStore.EXTRA_OUTPUT, postURI);
-                startActivityForResult(makePostIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            Log.i("Profile", "onActivityResult: Make Post Image Capture RESULT OK");
-            Bitmap postBitmap = null;
-            try {
-                postBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
-                getCtx().setPostBitmap(postBitmap);
-                Intent intent = new Intent(this, Caption.class);
-                startActivity(intent);
-            } catch (IOException e) {
-                e.printStackTrace();
-        }}else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_CANCELED){
-            Log.i("Profile", "onActivityResult: Make Post Image Capture RESULT CANCELLED");
-        }else{
-        }
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        getCtx().setCurrentPhotoPath(currentPhotoPath);
-        return image;
-    }
 
     public CurrentPost getCtx(){
         return ((CurrentPost) getApplicationContext());

@@ -2,6 +2,7 @@ package com.example.ece1778;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,8 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,9 +29,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class Caption extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -40,6 +46,9 @@ public class Caption extends AppCompatActivity {
     private ImageView postImage;
     private Button buttonCancelCaption, buttonPostCaption;
     private EditText editTextCaption;
+
+    private Uri postURI;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,17 +88,75 @@ public class Caption extends AppCompatActivity {
             }
         });
 
-        //set post imageView and currentPhotoPath based on Application Context
-        postBitmap = getCtx().getPostBitmap();
-        postImage.setImageBitmap(postBitmap);
-        currentPhotoPath = getCtx().getCurrentPhotoPath();
+        //If the user cancelled taking a picture, or want to change a picture
+        postImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePicture();
+            }
+        });
+
+        //this page will start from taking a picture
+        takePicture();
     }
 
+    private void takePicture() {
+        Log.d(TAG,"The user is taking a picture!");
+        Intent makePostIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (makePostIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Toast.makeText(Caption.this, "Error when creating the Post File",
+                        Toast.LENGTH_LONG).show();
+            }
+            if (photoFile != null) {
+                postURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
+                getCtx().setPostUri(postURI);
+                makePostIntent.putExtra(MediaStore.EXTRA_OUTPUT, postURI);
+                startActivityForResult(makePostIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+            Log.i(TAG, "onActivityResult: Make Post Image Capture RESULT OK");
+            try {
+                postBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
+                postImage.setImageBitmap(postBitmap);
+                Log.i(TAG, "onActivityResult ok: get postBitmap successfully");
+                getCtx().setPostBitmap(postBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.i(TAG, "onActivityResult ok: get postBitmap unsuccessfully");
+            }}else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_CANCELED){
+            Log.i(TAG, "onActivityResult: Make Post Image Capture RESULT CANCELLED");
+        }else{
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        getCtx().setCurrentPhotoPath(currentPhotoPath);
+        return image;
+    }
 
     private void uploadPost() throws IOException {
-
-        // Crop the image to square
-        Bitmap square = cropToSquare(postBitmap);
+         // crop the picture to square
+         Bitmap square = cropToSquare(postBitmap);
 
         //Rotate the image
         ExifInterface ei = new ExifInterface(currentPhotoPath);
