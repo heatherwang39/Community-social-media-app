@@ -1,15 +1,18 @@
 package com.example.ece1778;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,25 +25,26 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class GlobalActivity extends AppCompatActivity {
-    
+public class GlobalFragment extends Fragment {
+
     private static final String TAG = "Global";
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    
+
     private RecyclerView recyclerViewGlobalPostList;
     private ArrayList<Post> globalPostList;
     private GlobalPostAdapter globalPostAdapter;
-    private GridLayoutManager gridLayoutManager;    
-    
-    private Button buttonSignOut, buttonPost, buttonMyFeed;
+    private GridLayoutManager gridLayoutManager;
+
+    private Button buttonSignOut;
     private String uID;
-    
+
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_global);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_global, container, false);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -51,47 +55,31 @@ public class GlobalActivity extends AppCompatActivity {
 
         globalPostList = new ArrayList <Post> ();
 
-        buttonSignOut = (Button) findViewById(R.id.buttonSignOut);
-        buttonMyFeed = (Button) findViewById(R.id.buttonMyFeed);
-        buttonPost = (Button) findViewById(R.id.buttonPost);
+        buttonSignOut = (Button) rootView.findViewById(R.id.buttonSignOut);
 
-        
         buttonSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     // Sign out and then go to login page
                     mAuth.signOut();
-                    startActivity(new Intent(GlobalActivity.this, MainActivity.class));
+                    startActivity(new Intent(getActivity(), MainActivity.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        buttonMyFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(GlobalActivity.this, ProfileActivity.class));
-            }
-        });
-
-        buttonPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(GlobalActivity.this, Caption.class));
-            }
-        });
-
-        recyclerViewGlobalPostList = (RecyclerView) findViewById(R.id.recyclerViewGlobalPostList);
-        gridLayoutManager = new GridLayoutManager(this, 1,GridLayoutManager.VERTICAL,false);
+        recyclerViewGlobalPostList = (RecyclerView) rootView.findViewById(R.id.recyclerViewGlobalPostList);
+        gridLayoutManager = new GridLayoutManager(getActivity(), 1,GridLayoutManager.VERTICAL,false);
         recyclerViewGlobalPostList.setLayoutManager(gridLayoutManager);
 
         loadGlobalPosts();
+
+        return rootView;
     }
 
     private void loadGlobalPosts() {
-
         globalPostList.clear();
         CollectionReference collectionReference = db.collection("photos");
         collectionReference.orderBy("timeStamp", Query.Direction.DESCENDING)
@@ -109,11 +97,12 @@ public class GlobalActivity extends AppCompatActivity {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                         Log.d(TAG, "all global posts:" + globalPostList.toString());
-                        globalPostAdapter = new GlobalPostAdapter(GlobalActivity.this, globalPostList);
+                        globalPostAdapter = new GlobalPostAdapter(getActivity(), globalPostList);
                         recyclerViewGlobalPostList.setAdapter(globalPostAdapter);
                         recyclerViewGlobalPostList.setHasFixedSize(true);
                     }
                 });
 
     }
+
 }

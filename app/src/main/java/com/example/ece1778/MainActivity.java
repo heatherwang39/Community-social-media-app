@@ -2,10 +2,12 @@ package com.example.ece1778;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Check whether the user has been logged in
         if(mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            startActivity(new Intent(getApplicationContext(), BottomNavigationActivity.class));
         }else{
             buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
             buttonSignUp.setOnClickListener(this);
@@ -50,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editTextPassword = (EditText) findViewById(R.id.editTextPassword);
             progressBar = (ProgressBar) findViewById(R.id.progressBar);
         }
-
-
     }
 
     @Override
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                            Intent intent = new Intent(MainActivity.this, BottomNavigationActivity.class);
                             startActivity(intent);
                             Log.d(TAG, "successfully logged in");
                             progressBar.setVisibility(View.INVISIBLE);

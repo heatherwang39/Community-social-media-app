@@ -133,7 +133,7 @@ public class CommentActivity extends AppCompatActivity {
 
                         //after delete the post, go back to Profile page
                         //I put it here to make sure the async delete post is complete
-                        startActivity(new Intent(CommentActivity.this, ProfileActivity.class));
+                        startActivity(new Intent(CommentActivity.this, BottomNavigationActivity.class));
                     }
                 } else {
                     Log.d(TAG, "Error getting post documents when deleting: ", task.getException());

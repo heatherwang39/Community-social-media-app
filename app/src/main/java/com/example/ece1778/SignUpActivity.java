@@ -195,8 +195,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Intent intent = new Intent(SignUpActivity.this, ProfileActivity.class);
-                                    intent.putExtra("imageBitmap",imageBitmap);
+                                    Intent intent = new Intent(SignUpActivity.this, BottomNavigationActivity.class);
                                     startActivity(intent);
                                     Log.d(TAG, "createUserWithEmail: firestore success, user profile is created for"+uID);
                                 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_my_feed"
+        android:title="Profile" />
+
+    <item
+        android:id="@+id/nav_global"
+        android:icon="@drawable/ic_global"
+        android:title="Global" />
+
+    <item
+        android:id="@+id/nav_post"
+        android:icon="@drawable/ic_post"
+        android:title="Post" />
+
+</menu>

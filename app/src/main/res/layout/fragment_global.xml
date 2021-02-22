@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewBanner"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:padding="20dp"
+        android:background="#C6CFD3"
+        android:gravity="center_vertical"
+        android:text="Global"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+    <Button
+        android:id="@+id/buttonSignOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:text="Log Out"
+        android:drawableLeft="@drawable/ic_logout"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewGlobalPostList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textViewBanner"
+        android:layout_above="@+id/bottomButtonContainer"
+        android:layout_marginTop="0dp"
+        android:scrollbars="vertical" />
+
+</RelativeLayout>

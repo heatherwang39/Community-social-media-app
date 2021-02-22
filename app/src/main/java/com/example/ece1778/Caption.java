@@ -113,7 +113,7 @@ public class Caption extends AppCompatActivity {
             }
             if (photoFile != null) {
                 postURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
-                getCtx().setPostUri(postURI);
+//                getCtx().setPostUri(postURI);
                 makePostIntent.putExtra(MediaStore.EXTRA_OUTPUT, postURI);
                 startActivityForResult(makePostIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -129,7 +129,7 @@ public class Caption extends AppCompatActivity {
                 postBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
                 postImage.setImageBitmap(postBitmap);
                 Log.i(TAG, "onActivityResult ok: get postBitmap successfully");
-                getCtx().setPostBitmap(postBitmap);
+//                getCtx().setPostBitmap(postBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.i(TAG, "onActivityResult ok: get postBitmap unsuccessfully");
@@ -150,7 +150,7 @@ public class Caption extends AppCompatActivity {
         );
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
-        getCtx().setCurrentPhotoPath(currentPhotoPath);
+//        getCtx().setCurrentPhotoPath(currentPhotoPath);
         return image;
     }
 
@@ -199,7 +199,7 @@ public class Caption extends AppCompatActivity {
                     public void onSuccess(Uri uri) {
                         Log.d(TAG, "onSuccess: get uri "+uri);
                         addToUserPosts(uri);
-                        Intent intent = new Intent(Caption.this, ProfileActivity.class);
+                        Intent intent = new Intent(Caption.this, BottomNavigationActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -252,9 +252,9 @@ public class Caption extends AppCompatActivity {
                 });
     }
 
-    public CurrentPost getCtx(){
-        return ((CurrentPost) getApplicationContext());
-    }
+//    public CurrentPost getCtx(){
+//        return ((CurrentPost) getApplicationContext());
+//    }
 
 
 
