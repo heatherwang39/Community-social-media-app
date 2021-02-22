@@ -15,8 +15,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -24,6 +26,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -32,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -41,11 +49,12 @@ public class Caption extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private static final String TAG = "Caption";
-    private String uID, currentPhotoPath, timeStamp, caption;
+    private String uID, currentPhotoPath, timeStamp, caption, hashTags;
     private Bitmap postBitmap;
     private ImageView postImage;
     private Button buttonCancelCaption, buttonPostCaption;
     private EditText editTextCaption;
+    private Switch switchHashTag;
 
     private Uri postURI;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -69,6 +78,7 @@ public class Caption extends AppCompatActivity {
         editTextCaption = (EditText) findViewById(R.id.editTextCaption);
         buttonCancelCaption = (Button) findViewById(R.id.buttonCancelCaption);
         buttonPostCaption = (Button) findViewById(R.id.buttonPostCaption);
+        switchHashTag = (Switch) findViewById(R.id.switchHashTag);
 
         buttonCancelCaption.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +98,20 @@ public class Caption extends AppCompatActivity {
             }
         });
 
-        //If the user cancelled taking a picture, or want to change a picture
+        switchHashTag.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    labelImage(isChecked);
+                } else {
+                    // The toggle is disabled
+                    labelImage(isChecked);
+                }
+            }
+        });
+
+
+        //If the user cancelled taking a picture, or want to change the picture
         postImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,6 +121,56 @@ public class Caption extends AppCompatActivity {
 
         //this page will start from taking a picture
         takePicture();
+    }
+
+    private void labelImage(boolean isChecked) {
+        if (isChecked) {
+            //Start a new line for hashTags
+            hashTags = "\n";
+
+            //Create a FirebaseVisionImage object from a Bitmap object
+            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(postBitmap);
+
+            // Set the minimum confidence required:
+            FirebaseVisionOnDeviceImageLabelerOptions options =
+                    new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
+                            .setConfidenceThreshold(0.7f)
+                            .build();
+            FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance()
+                    .getOnDeviceImageLabeler(options);
+
+            labeler.processImage(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
+                        @Override
+                        public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+                            // Task completed successfully
+                            for (FirebaseVisionImageLabel label : labels) {
+                                String text = label.getText();
+                                String entityId = label.getEntityId();
+                                float confidence = label.getConfidence();
+                                Log.e(TAG, "Hashtags: " + entityId + "  ** text:" + text + " ** confidence" + confidence);
+                                hashTags = hashTags + "#" + text + " ";
+                            }
+                            caption = editTextCaption.getText().toString();
+                            editTextCaption.setText(caption + hashTags);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Task failed with an exception
+                            Toast.makeText(Caption.this, "Unable to generate hash tags",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            caption = editTextCaption.getText().toString();
+            //Delete the auto generated tags(they should be in a new line), keep those typed by user himself
+            if (caption.contains("/n")) {
+                String[] textWithoutAutoTags = caption.split("/n");
+                editTextCaption.setText(textWithoutAutoTags[0]);
+            }
+        }
     }
 
     private void takePicture() {

@@ -18,20 +18,19 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_margin="10dp"
-        android:hint="Please Enter here"
-        android:textSize="18dp" />
+        android:hint="@string/caption_hint"
+        android:textSize="18sp" />
     <Switch
-        android:id="@+id/enableButton"
+        android:id="@+id/switchHashTag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:switchMinWidth="60dp"
-        android:text="Enable Auto Hashtags:"
-        android:textSize="18dp"
-        android:checked="false"
-        android:textOff="OFF"
-        android:textOn="ON"/>
-    <View style="@style/Divider"/>
+        android:text="@string/switch_text"
+        android:textSize="18sp"
+        android:textOff="@string/off"
+        android:textOn="@string/on"/>
+<!--    <View style="@style/Divider"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:drawableLeft="@drawable/ic_cancel"/>
 
         <Button
@@ -55,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Post"
+            android:text="@string/post"
             android:drawableLeft="@drawable/ic_post"/>
 
     </LinearLayout>

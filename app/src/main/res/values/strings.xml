@@ -5,4 +5,9 @@
     <string name="my_feed">My Feed</string>
     <string name="post">Post</string>
     <string name="global">Global</string>
+    <string name="switch_text">Enable Auto Hashtags:</string>
+    <string name="off">OFF</string>
+    <string name="on">ON</string>
+    <string name="caption_hint">Please Enter Caption Here</string>
+    <string name="cancel">Cancel</string>
 </resources>
