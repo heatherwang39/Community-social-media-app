@@ -26,14 +26,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
-import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.label.ImageLabel;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -98,6 +98,9 @@ public class Caption extends AppCompatActivity {
             }
         });
 
+        //User needs to upload an image first to use this switch button
+        switchHashTag.setClickable(false);
+
         switchHashTag.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -128,27 +131,28 @@ public class Caption extends AppCompatActivity {
             //Start a new line for hashTags
             hashTags = "\n";
 
-            //Create a FirebaseVisionImage object from a Bitmap object
-            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(postBitmap);
+            InputImage image = null;
+            try {
+                image = InputImage.fromFilePath(this,postURI);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             // Set the minimum confidence required:
-            FirebaseVisionOnDeviceImageLabelerOptions options =
-                    new FirebaseVisionOnDeviceImageLabelerOptions.Builder()
-                            .setConfidenceThreshold(0.7f)
-                            .build();
-            FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance()
-                    .getOnDeviceImageLabeler(options);
+            ImageLabelerOptions options = new ImageLabelerOptions.Builder()
+                    .setConfidenceThreshold(0.7f)
+                    .build();
+            ImageLabeler labeler = ImageLabeling.getClient(options);
 
-            labeler.processImage(image)
-                    .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
+            labeler.process(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<ImageLabel>>() {
                         @Override
-                        public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+                        public void onSuccess(List<ImageLabel> labels) {
                             // Task completed successfully
-                            for (FirebaseVisionImageLabel label : labels) {
+                            for (ImageLabel label : labels) {
                                 String text = label.getText();
-                                String entityId = label.getEntityId();
                                 float confidence = label.getConfidence();
-                                Log.e(TAG, "Hashtags: " + entityId + "  ** text:" + text + " ** confidence" + confidence);
+                                Log.e(TAG, "Hash tags: " + text + " ** confidence" + confidence);
                                 hashTags = hashTags + "#" + text + " ";
                             }
                             caption = editTextCaption.getText().toString();
@@ -166,8 +170,8 @@ public class Caption extends AppCompatActivity {
         } else {
             caption = editTextCaption.getText().toString();
             //Delete the auto generated tags(they should be in a new line), keep those typed by user himself
-            if (caption.contains("/n")) {
-                String[] textWithoutAutoTags = caption.split("/n");
+            if (caption.contains("\n")) {
+                String[] textWithoutAutoTags = caption.split("\n");
                 editTextCaption.setText(textWithoutAutoTags[0]);
             }
         }
@@ -201,12 +205,17 @@ public class Caption extends AppCompatActivity {
             try {
                 postBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), postURI);
                 postImage.setImageBitmap(postBitmap);
+
+                //user needs to upload an image first to use the auto-hash-tag button
+                switchHashTag.setClickable(true);
                 Log.i(TAG, "onActivityResult ok: get postBitmap successfully");
 //                getCtx().setPostBitmap(postBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.i(TAG, "onActivityResult ok: get postBitmap unsuccessfully");
             }}else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_CANCELED){
+            //user needs to upload an image first to use the auto-hash-tag button
+
             Log.i(TAG, "onActivityResult: Make Post Image Capture RESULT CANCELLED");
         }else{
         }
@@ -228,61 +237,68 @@ public class Caption extends AppCompatActivity {
     }
 
     private void uploadPost() throws IOException {
-         // crop the picture to square
-         Bitmap square = cropToSquare(postBitmap);
+        //check if postBitmap exists
+        if(postBitmap != null){
 
-        //Rotate the image
-        ExifInterface ei = new ExifInterface(currentPhotoPath);
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL);
-        Bitmap rotatedBitmap = null;
-        Matrix matrix = new Matrix();
-        switch(orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.postRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.postRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.postRotate(270);
-                break;
-            default:
+            // crop the picture to square
+            Bitmap square = cropToSquare(postBitmap);
+
+            //Rotate the image
+            ExifInterface ei = new ExifInterface(currentPhotoPath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+            Bitmap rotatedBitmap = null;
+            Matrix matrix = new Matrix();
+            switch(orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.postRotate(270);
+                    break;
+                default:
+            }
+            rotatedBitmap = Bitmap.createBitmap(square, 0, 0, square.getWidth(), square.getHeight(),
+                    matrix, true);
+
+            // Downscale to 1024*1024
+            Bitmap finalBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 1024, 1024, true);
+
+            //upload
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+            timeStamp = String.valueOf(System.currentTimeMillis());
+            final StorageReference postReference = storage.getReference().child("photos").child(uID+"/"+timeStamp+".jpeg");
+
+            postReference.putBytes(baos.toByteArray()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(Caption.this, "onSuccess: Image Posted",
+                            Toast.LENGTH_SHORT).show();
+                    postReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Log.d(TAG, "onSuccess: get uri "+uri);
+                            addToUserPosts(uri);
+                            Intent intent = new Intent(Caption.this, BottomNavigationActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "OnFailure: ", e.getCause());
+                }
+            });
+        }else{
+            Toast.makeText(Caption.this, "Please upload an image!",
+                    Toast.LENGTH_SHORT).show();
         }
-        rotatedBitmap = Bitmap.createBitmap(square, 0, 0, square.getWidth(), square.getHeight(),
-                matrix, true);
-
-        // Downscale to 1024*1024
-        Bitmap finalBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 1024, 1024, true);
-
-        //upload
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-        timeStamp = String.valueOf(System.currentTimeMillis());
-        final StorageReference postReference = storage.getReference().child("photos").child(uID+"/"+timeStamp+".jpeg");
-
-        postReference.putBytes(baos.toByteArray()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(Caption.this, "onSuccess: Image Posted",
-                        Toast.LENGTH_SHORT).show();
-                postReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Log.d(TAG, "onSuccess: get uri "+uri);
-                        addToUserPosts(uri);
-                        Intent intent = new Intent(Caption.this, BottomNavigationActivity.class);
-                        startActivity(intent);
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, "OnFailure: ", e.getCause());
-            }
-        });
     }
 
     public static Bitmap cropToSquare(Bitmap bitmap){
@@ -328,8 +344,5 @@ public class Caption extends AppCompatActivity {
 //    public CurrentPost getCtx(){
 //        return ((CurrentPost) getApplicationContext());
 //    }
-
-
-
 
 }

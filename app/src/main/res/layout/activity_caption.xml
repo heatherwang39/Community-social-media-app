@@ -16,7 +16,7 @@
     <EditText
         android:id="@+id/editTextCaption"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="@string/caption_hint"
         android:textSize="18sp" />
