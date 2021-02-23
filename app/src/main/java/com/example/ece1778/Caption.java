@@ -83,7 +83,8 @@ public class Caption extends AppCompatActivity {
         buttonCancelCaption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(Caption.this, BottomNavigationActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -277,7 +278,7 @@ public class Caption extends AppCompatActivity {
             postReference.putBytes(baos.toByteArray()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(Caption.this, "onSuccess: Image Posted",
+                    Toast.makeText(Caption.this, "Image Posted",
                             Toast.LENGTH_SHORT).show();
                     postReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
