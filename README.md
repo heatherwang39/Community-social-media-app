@@ -1,3 +1,4 @@
-# ECE 1778
+# A social network Android app
 
-A clone of Instagram
+Targeted devices: Android tablet and phone
+
